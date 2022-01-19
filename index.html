@@ -12,8 +12,17 @@
       <h1>Weather Dashboard Report</h1>
     </header>
     <main>
-      <section>
-        Search for your location here:
-      </section>
+      <div>
+        <div>
+          <label id="searchLabel">Search Here:</label>
+          <input type="text" placeholder="Enter City Here" name=cityName id="cityName">
+        </div>
+      </div>
+      <h2 class=dailyForecast id=dailyForecast>
+        Today's forecast for {{city}}
+      </h2>
+      <h2 class=5day id=5day>
+        Five Day Forecast for {{city}}
+      </h2>
     </main>
   </body>
