@@ -11,18 +11,21 @@
     <header>
       <h1>Weather Dashboard Report</h1>
     </header>
-    <main>
-      <div>
+
+    <section class="hero">
         <div>
+          <h2>Search For A Location here</h2>
           <label id="searchLabel">Search Here:</label>
           <input type="text" placeholder="Enter City Here" name=cityName id="cityName">
+          <button class="submit">Submit</button>
         </div>
-      </div>
       <h2 class=dailyForecast id=dailyForecast>
-        Today's forecast for {{city}}
+        Today's Forecast
       </h2>
       <h2 class=5day id=5day>
-        Five Day Forecast for {{city}}
+        Five Day Forecast
       </h2>
     </main>
+
+    <script src="assets/js/script.js"></script>
   </body>
