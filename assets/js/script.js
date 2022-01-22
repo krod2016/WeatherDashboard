@@ -2,8 +2,9 @@ const weatherForm = document.querySelector('#weatherForm');
 const weatherInput = document.querySelector('#weatherInput');
 const currentWeather = document.querySelector('#currentWeather');
 const searchList = document.querySelector('#searchList');
-const forecastWeather = document.querySelector('#forecastWeather');
-let searchArray;
+const forecastWeather = document.querySelector('#fiveDay');
+const submitButton = document.querySelector('#submit');
+let searchArray = []
 
 //recent searches
 const createRecentSearches = function () {
@@ -64,86 +65,103 @@ const saveSearch = function (searchTerm) {
   createRecentSearches();
 }
 
-const getWeather = async function (location) {
+const getWeather = function (location) {
+  let latitude;
+  let longitude;
+  fetch(`https://dev.virtualearth.net/REST/v1/Locations?query=${location}&key=AlHqyYU_KwIAYUdgDdxmuZEdZI1CciCfJvl8u33LuVbx_bhnP1oMEp7hoqw7UIhF`)
+    .then(function (response) {
+      response.json()
+        .then(function (data) {
+          console.log(data)
+          latitude = data.resourceSets[0].resources[0].bbox[0];
+          longitude = data.resourceSets[0].resources[0].bbox[1];
+        })
+      //gets city's weather
+      const weatherAPI = fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=ee7cf386229176507f4fbdf87aa25e5f&units=imperial`
+      )
 
-  //latitude and longitude of city
-  const latLongResponse = await fetch(
-    ''
-  )
-  const latLongData = await latLongResponse.json();
-  const lat = latLongData.coord.lat;
-  const lon = latLongData.coord.lon;
+      const data = weatherAPI.then(function (response) {
+        response.json().then(function (dataKey) {
+          const temp = document.createElement("h1");
+          temp.textContent = `${Math.round(dataKey.current.temp)}°F`;
 
-  //gets city's weather
-  const response = await fetch(
-    ''
-  )
-  const data = await response.json();
+          const locationText = document.createElement("h3");
+          locationText.textContent = location;
+          locationText.classList.add("card-text");
+          locationText.classList.add("capitalize");
 
-  //clears out previous searches
-  currentWeather.textContent = '';
+          const today = document.createElement("h3");
+          today.textContent = "Today";
+          today.classList.add("card-text", "-mb-2");
 
-  const temp = document.createElement("h1");
-  temp.textContent = `${Math.round(data.current.temp)}°F`;
+          const windSpeed = document.createElement("p");
+          windSpeed.textContent = `Wind: ${Math.round(dataKey.current.wind_speed)} MPH`;
+          windSpeed.classList.add("card-text");
 
-  const locationText = document.createElement("h3");
-  locationText.textContent = location;
-  locationText.classList.add("card-text");
-  locationText.classList.add("capitalize");
+          const humidity = document.createElement("p");
+          humidity.textContent = `Humidity: ${dataKey.current.humidity}%`;
+          humidity.classList.add("card-text");
 
-  const today = document.createElement("h3");
-  today.textContent = "Today";
-  today.classList.add("card-text", "-mb-2");
+          const uvIndexContainer = document.createElement("div");
+          const uvIndex = document.createElement("p");
+          const uvRating = document.createElement("span");
+          uvIndex.textContent = dataKey.current.uvi;
+          uvIndex.classList.add("card-text");
+          uvRating.classList.add("card-text");
 
-  const windSpeed = document.createElement("p");
-  windSpeed.textContent = `Wind: ${Math.round(data.current.wind_speed)} MPH`;
-  windSpeed.classList.add("card-text");
+          uvIndexContainer.appendChild(uvIndex);
+          uvIndex.appendChild(uvRating);
 
-  const humidity = document.createElement("p");
-  humidity.textContent = `Humidity: ${data.current.humidity}%`;
-  humidity.classList.add("card-text");
+          const icon = document.createElement("img");
+          const iconId = dataKey.current.weather[0].icon;
+          icon.setAttribute('src', '');
+          icon.setAttribute('alt', 'Weather icon');
 
-  const uvIndexContainer = document.createElement("div");
-  const uvIndex = document.createElement("p");
-  const uvRating = document.createElement("span");
-  uvIndex.textContent = data.current.uvi;
-  uvIndex.classList.add("card-text");
-  uvRating.classList.add("card-text");
+          currentWeather.appendChild(icon);
+          currentWeather.appendChild(temp);
+          currentWeather.appendChild(today);
+          currentWeather.appendChild(locationText);
+          currentWeather.appendChild(uvIndexContainer);
 
-  uvIndexContainer.appendChild(uvIndex);
-  uvIndex.appendChild(uvRating);
+          currentWeather.appendChild(humidity);
+          currentWeather.appendChild(windSpeed);
 
-  const icon = document.createElement("img");
-  const iconId = data.current.weather[0].icon;
-  icon.setAttribute('src', '');
-  icon.setAttribute('alt', 'Weather icon');
+          if (dataKey.current.uvi < 3) {
+            uvIndex.classList.add('uv-low');
+            uvRating.textContent = " Good"
+          } else if (dataKey.current.uvi >= 3 && dataKey.current.uvi < 8) {
+            uvIndex.classList.add('uv-medium');
+            uvRating.textContent = " Medium"
+          } else {
+            uvIndex.classList.add('uv-high');
+            uvRating.textContent = " High"
+          }
+          getForecast(dataKey);
+        })
 
-  currentWeather.appendChild(icon);
-  currentWeather.appendChild(temp);
-  currentWeather.appendChild(today);
-  currentWeather.appendChild(locationText);
-  currentWeather.appendChild(uvIndexContainer);
 
-  currentWeather.appendChild(humidity);
-  currentWeather.appendChild(windSpeed);
+      //clears out previous searches
+      // currentWeather.textContent = '';
+      console.log(latitude);
+      console.log(longitude);
+      });
+    });
+};
 
-  if (data.current.uvi < 3) {
-    uvIndex.classList.add('uv-low');
-    uvRating.textContent = " Good"
-  } else if (data.current.uvi >= 3 && data.current.uvi < 8) {
-    uvIndex.classList.add('uv-medium');
-    uvRating.textContent = " Medium"
-  } else {
-    uvIndex.classList.add('uv-high');
-    uvRating.textContent = " High"
-  }
+//latitude and longitude of city
+// const latLongResponse = fetch(
+// )
 
-  getForecast(data);
-}
+// const latLongData = latLongResponse.json();
+// const lat = latLongData.coord.lat;
+// const lon = latLongData.coord.lon;
+
+
 
 // Get the 5 day forecast
 const getForecast = function (data) {
-
+  console.log(data)
   forecastWeather.textContent = '';
 
   data.daily.forEach(function (value, index) {
@@ -183,30 +201,30 @@ const getForecast = function (data) {
   });
 }
 
-weatherForm.addEventListener('submit', formSubmitHandler);
+submitButton.addEventListener('click', formSubmitHandler);
 createRecentSearches();
-weatherInput.addEventListener('click', function (e) {
-  searchList.classList.toggle("show");
-});
+// weatherInput.addEventListener('click', function (e) {
+//   searchList.classList.toggle("show");
+// });
 
-window.onclick = function (event) {
-  if (!event.target.matches('#weatherInput') && !event.target.matches('#searchList')) {
-    searchList.classList.remove("show");
-  }
-}
+// window.onclick = function (event) {
+//   if (!event.target.matches('#weatherInput') && !event.target.matches('#searchList')) {
+//     searchList.classList.remove("show");
+//   }
+// }
 
-window.onload = function () {
-  createRecentSearches();
+// window.onload = function () {
+//   createRecentSearches();
 
-  // Get the most recent location from localstorage, otherwise set the first location to New York
-  if (localStorage.getItem('searchItem')) {
-    searchArray = JSON.parse(localStorage.getItem('searchItem'));
-    searchArray.reverse();
-  } else {
-    searchArray = [""];
-  }
+//   // Get the most recent location from localstorage
+//   if (localStorage.getItem('searchItem')) {
+//     searchArray = JSON.parse(localStorage.getItem('searchItem'));
+//     searchArray.reverse();
+//   } else {
+//     searchArray = [""];
+//   }
 
-  getWeather(searchArray[0]);
+//   getWeather(searchArray[0]);
 
-  weatherInput.value = searchArray[0];
-}
+//   weatherInput.value = searchArray[0];
+// }
