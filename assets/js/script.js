@@ -7,7 +7,7 @@ const submitButton = document.querySelector('#submit');
 const openKey = 'ee7cf386229176507f4fbdf87aa25e5f';
 let searchArray = []
 
-//recent searches
+//recent searches 
 const createRecentSearches = function () {
   if (JSON.parse(localStorage.getItem('searchItem'))) {
     const searchData = JSON.parse(localStorage.getItem('searchItem'));
@@ -38,9 +38,8 @@ const recentSearchHandler = function (event) {
 
   const location = weatherInput.value.trim();
   if (location) {
-    getWeather(location); 
+    getWeather(location);
   }
-
   saveSearch(location);
 }
 
@@ -54,7 +53,7 @@ const formSubmitHandler = function (event) {
   }
 
   saveSearch(location);
-  // searchList.classList.remove("show");
+  searchList.classList.remove("show");
 }
 
 //adds new searches
@@ -70,22 +69,39 @@ const saveSearch = function (searchTerm) {
 const getWeather = async function (location) {
   const weatherRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${openKey}`)
   const weatherObj = await weatherRes.json()
-  const {lat , lon} = weatherObj.coord
+  const { lat, lon } = weatherObj.coord
   console.log("Weather Log: ", weatherObj);
 
-  const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${openKey}`)
+  const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${openKey}&units=imperial`)
   const forecastObj = await forecastRes.json()
-  console.log("Forcast Log: ", forecastObj);
-  
-  getForecast(forecastObj)
+  console.log("Forecast Log: ", forecastObj);
 
+  getForecast(forecastObj)
 };
 
-// Get the 5 day forecast
+// Gets daily forecast
 const getForecast = function (data) {
-  console.log(data)
-  forecastWeather.textContent = '';
+  console.log("data", data);
 
+  const currentDate = document.createElement("h2");
+      const unixDate = value.dt;
+      currentDate.textContent = new Date(unixDate * 1000).toLocaleString('en-US', { weekday: 'long' });
+
+  const currentForecast = document.createElement("h2");
+  currentForecast.textContent = `${Math.round(data.current.temp)}°F`;
+  
+  const currentWindspeed = document.createElement("h2");
+  currentWindspeed.textContent = `${Math.round(data.current.wind_speed)} MPH`;
+  
+  const currentHumidity = document.createElement("h2");
+  currentHumidity.textContent = `${data.current.humidity}%`;
+
+  document.getElementById("dailyForecastContainer").appendChild(current.Date);
+  document.getElementById("dailyForecastContainer").appendChild(currentForecast);
+  document.getElementById("dailyForecastContainer").appendChild(currentWindspeed);
+  document.getElementById("dailyForecastContainer").appendChild(currentHumidity);
+
+// Gets 5 day forecast
   data.daily.forEach(function (value, index) {
     if (index > 0 && index < 6) {
       const forecastContainer = document.createElement("div");
@@ -94,11 +110,9 @@ const getForecast = function (data) {
       const forecastDate = document.createElement("p");
       const unixDate = value.dt;
       forecastDate.textContent = new Date(unixDate * 1000).toLocaleString('en-US', { weekday: 'long' });
-      forecastDate.classList.add('pb-14');
 
       const forecastTemp = document.createElement("h2");
       forecastTemp.textContent = `${Math.round(value.temp.day)}°F`;
-      forecastTemp.classList.add('pb-14');
 
       const forecastWindSpeed = document.createElement("p");
       forecastWindSpeed.textContent = `${Math.round(value.wind_speed)} MPH`;
@@ -106,18 +120,10 @@ const getForecast = function (data) {
       const forecastHumidity = document.createElement("p");
       forecastHumidity.textContent = `${value.humidity}%`;
 
-      const forecastIcon = document.createElement("img");
-      const forecastIconId = value.weather[0].icon;
-      forecastIcon.setAttribute('src', '');
-      forecastIcon.setAttribute('alt', 'Weather icon');
-      forecastIcon.classList.add('pb-20');
-
       forecastContainer.appendChild(forecastDate);
-      forecastContainer.appendChild(forecastIcon);
       forecastContainer.appendChild(forecastTemp);
       forecastContainer.appendChild(forecastWindSpeed);
       forecastContainer.appendChild(forecastHumidity);
-
       forecastWeather.appendChild(forecastContainer);
     }
   });
@@ -126,7 +132,7 @@ const getForecast = function (data) {
 submitButton.addEventListener('click', formSubmitHandler);
 createRecentSearches();
 weatherInput.addEventListener('click', function (e) {
-  searchList.classList.toggle("show");
+  // searchList.classList.toggle("show");
 });
 
 window.onclick = function (event) {
