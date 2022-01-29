@@ -82,9 +82,10 @@ const getWeather = async function (location) {
 // Gets daily forecast
 const getForecast = function (data) {
   console.log("data", data);
+  console.log(data.daily[0].dt)
 
   const currentDate = document.createElement("h2");
-      const unixDate = value.dt;
+      const unixDate = data.daily[0].dt;
       currentDate.textContent = new Date(unixDate * 1000).toLocaleString('en-US', { weekday: 'long' });
 
   const currentForecast = document.createElement("h2");
@@ -96,7 +97,7 @@ const getForecast = function (data) {
   const currentHumidity = document.createElement("h2");
   currentHumidity.textContent = `${data.current.humidity}%`;
 
-  document.getElementById("dailyForecastContainer").appendChild(current.Date);
+  document.getElementById("dailyForecastContainer").appendChild(currentDate);
   document.getElementById("dailyForecastContainer").appendChild(currentForecast);
   document.getElementById("dailyForecastContainer").appendChild(currentWindspeed);
   document.getElementById("dailyForecastContainer").appendChild(currentHumidity);
@@ -108,8 +109,8 @@ const getForecast = function (data) {
       forecastContainer.classList.add("text-center");
 
       const forecastDate = document.createElement("p");
-      const unixDate = value.dt;
-      forecastDate.textContent = new Date(unixDate * 1000).toLocaleString('en-US', { weekday: 'long' });
+      const unixDate = data.daily[index].dt;
+      forecastDate.textContent = new Date (unixDate * 1000).toLocaleString('en-US', { weekday: 'long' });
 
       const forecastTemp = document.createElement("h2");
       forecastTemp.textContent = `${Math.round(value.temp.day)}°F`;
