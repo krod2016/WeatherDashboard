@@ -7,9 +7,10 @@ h1 {
   text-align: center;
 }
 
-/*media queries for interactive webpage*/
-@media screen and (max-width: 980px) {}
+h2 {
+  text-align: center;
+}
 
-@media screen and (max-width: 768px) {}
-
-@media screen and (max-width: 575px) {}
+p {
+  text-align: center;
+}
