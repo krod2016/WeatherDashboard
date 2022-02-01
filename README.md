@@ -15,6 +15,7 @@ This page can be used to research different city's weather for travelling purpos
 * JavaScript
 
 # Website Link:
+https://krod2016.github.io/WeatherDashboard/
 
 # GitHub Link:
 https://github.com/krod2016/WeatherDashboard
