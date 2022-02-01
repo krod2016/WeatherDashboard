@@ -1,4 +1,5 @@
 ## Weather Dashboard
+* For this app to work, please click this link before starting: https://cors-anywhere.herokuapp.com/corsdemo
 
 # Description
 This page can be used to research different city's weather for travelling purposes.
