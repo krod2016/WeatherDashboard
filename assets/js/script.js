@@ -67,7 +67,7 @@ const saveSearch = function (searchTerm) {
 
 //gives location latitude and longitude
 const getWeather = async function (location) {
-  const weatherRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${openKey}`)
+  const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${openKey}`)
   const weatherObj = await weatherRes.json()
   const { lat, lon } = weatherObj.coord
   console.log("Weather Log: ", weatherObj);
